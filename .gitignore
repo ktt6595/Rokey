@@ -1,0 +1,18 @@
+# ROS2
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Secrets
+kaggle.json
+
+# OS
+.DS_Store
+Thumbs.db

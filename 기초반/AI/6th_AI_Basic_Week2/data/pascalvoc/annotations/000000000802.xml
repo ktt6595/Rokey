@@ -1,0 +1,26 @@
+<annotation>
+  <folder>VOC</folder>
+  <filename>000000000802.jpg</filename>
+  <path>/content/drive/MyDrive/Class/cv/Object Detection/data/coco/images/000000000802.jpg</path>
+  <source>
+    <database>Unknown</database>
+  </source>
+  <size>
+    <width>424</width>
+    <height>640</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>oven</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>33</xmin>
+      <ymin>289</ymin>
+      <xmax>159</xmax>
+      <ymax>520</ymax>
+    </bndbox>
+  </object>
+</annotation>
