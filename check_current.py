@@ -1,4 +1,4 @@
-# 그리퍼 열기 함수
+ # 그리퍼 열기 함수
 def open_gripper():
     set_digital_output(2, ON)
     wait(1.00)
@@ -15,51 +15,56 @@ def z_up():
     movel(posx(0,0,10,0,0,0),v=50,a=50,mod= DR_MV_MOD_REL)
 #Z축 하강
 def z_down():
-    movel(posx(0,0,-10,0,0,0),v=50,a=50,mod= DR_MV_MOD_REL)
+    movel(posx(0,0,-12,0,0,0),v=50,a=50,mod= DR_MV_MOD_REL)
+
+movel(posx(426.10,13.48,144.04,173.681,-179.048,174.517),v = 50,a=50,mod=DR_MV_MOD_ABS)
+
+# 힘 제어 모드 활성화
+task_compliance_ctrl()
+# Z축 강성 낮게 (외력이 가해지면 부드럽게 멈춤)
+set_stiffnessx([1000.0, 1000.0, 1000.0, 100.0, 100.0, 100.0], time=0.0)
+# Z축으로 계속 힘을 줘서 자동으로 하강
+set_desired_force([0.0, 0.0, -20.0, 0.0, 0.0, 0.0], [0, 0, 1, 0, 0, 0], time=0.0, mod=DR_FC_MOD_ABS)
+wait(0.3)  # 힘 제어 안정화
+
 
 # 구분 알고리즘
 while True:
-    # Z위치 
+    # Z위치 변수
     pose, sol = get_current_posx(DR_BASE)
     x, y, z, rx, ry, rz = pose    
-    # 외력 측정(base죄표계 기준)
-    fx, fy, fz, tx, ty, tz = get_tool_force(ref)
-
-    # 힘 제어 모드 활성화
-    task_compliance_ctrl()
-    # Z축 강성 낮게 (외력이 가해지면 부드럽게 멈춤)
-    set_stiffnessx([200.0, 200.0, 10.0, 200.0, 200.0, 200.0], time=0.0)
-    # Z축으로 계속 힘을 줘서 자동으로 하강
-    set_desired_force([0.0, 0.0, -20.0, 0.0, 0.0, 0.0], [0, 0, 1, 0, 0, 0], time=0.0, mod=DR_FC_MOD_ABS)
-    wait(0.3)  # 힘 제어 안정화
-
-    if z <= 20:
+    # 외력 측정 변수 (base죄표계 기준)
+    fx, fy, fz, tx, ty, tz = get_tool_force()
+    
+    # 성공판별 기준
+    if z <= 75.670 and fx >= 2:
         break
 
     # 1번 조건 : 외력이 있고, z값이 ?이상일떄 분류
-    if fz >=0 , z > :
-        # 2번: tx,ty 동일로 인한 결합 유무 판단
-        if abs(tx) != abs(ty):
-            z_up()
-            # 3번 조건:  토크값에 따른 상하좌우 이동
-            dx = 0
-            dy = 0
-            if tx > 0:
-                dx = +5
-            elif tx < 0:
-                dx = -5
+    if fz >=5 and z > 35.617 :
+            
+        # 3번 조건:  토크값에 따른 상하좌우 이동
+        dx = 0
+        dy = 0
+        if tx > 0:
+            dx = +5
+        elif tx < 0:
+            dx = -5
 
-            if ty > 0:
-                dy = +5
-            elif ty < 0:
-                dy = -5
-
-            movel(posx(dx, dy, 0, 0, 0, 0), v=50,a=50,mod= DR_MV_MOD_REL)
-            z_down()    
-
-# 힘 제어 해제
-release_force(time=0.0)
-release_compliance_ctrl()    
+        if ty > 0:
+            dy = +5
+        elif ty < 0:
+            dy = -5
+        # 힘 제어 해제
+        release_force(time=0.0)
+        release_compliance_ctrl()    
+        # 이동
+        z_up()
+        movel(posx(dx, dy, 0, 0, 0, 0), v=50,a=50,mod= DR_MV_MOD_REL)
+        z_down() 
+    # 슬롯 입구 도달시
+    if z < 80:
+        continue
 # 그리퍼 열기
 grip_open()
 # 상승
